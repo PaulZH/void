@@ -1,0 +1,7 @@
+
+SELECT (COUNT(distinct ?property) AS ?total) ?property {
+  GRAPH ?g {
+    ?s ?property ?o. FILTER (ISIRI(?property))
+  }
+}
+GROUP BY ?property

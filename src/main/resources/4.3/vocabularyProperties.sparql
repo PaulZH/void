@@ -1,0 +1,7 @@
+SELECT DISTINCT ?result {
+  GRAPH ?g {
+    ?s ?result ?o.
+    FILTER (ISIRI(?result))
+  }
+}
+

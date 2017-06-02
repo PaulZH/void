@@ -1,0 +1,9 @@
+
+SELECT (COUNT(DISTINCT ?o) AS ?total) ?type {
+  GRAPH ?g {
+    ?s ?p ?o; a ?type . FILTER (!isLiteral(?o))
+  }
+}
+GROUP BY ?type
+
+

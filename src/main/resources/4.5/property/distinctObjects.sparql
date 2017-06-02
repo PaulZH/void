@@ -1,0 +1,9 @@
+
+SELECT (COUNT(DISTINCT ?o) AS ?total) ?property {
+  GRAPH ?g {
+    ?s ?property ?o. FILTER (!isLiteral(?o) && ISIRI(?property))
+  }
+}
+GROUP BY ?property
+
+

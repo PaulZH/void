@@ -1,0 +1,2 @@
+
+SELECT (COUNT(*) AS ?total) { GRAPH ?g { ?s ?p ?o }  }

@@ -1,0 +1,9 @@
+  SELECT (SAMPLE(?s) as ?example) ?type {
+    GRAPH ?g {
+      ?s a ?type. FILTER (
+          isIRI(?s)
+          {}  # uri space filter or not ?!
+        )
+    }
+  }
+  GROUP BY ?type

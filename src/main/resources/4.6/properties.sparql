@@ -1,0 +1,2 @@
+
+    SELECT (COUNT(distinct ?p) AS ?total)  { GRAPH ?g { ?s ?p ?o }  }

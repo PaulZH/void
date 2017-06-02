@@ -1,0 +1,7 @@
+
+SELECT (COUNT(*) AS ?total) ?type {
+  GRAPH ?g {
+    ?s ?p ?o; a ?type
+  }
+}
+GROUP BY ?type

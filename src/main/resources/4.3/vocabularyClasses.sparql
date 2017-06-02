@@ -1,0 +1,6 @@
+SELECT DISTINCT ?result {
+  GRAPH ?g {
+    ?s a ?result
+    FILTER (isIRI(?result))
+  }
+}
