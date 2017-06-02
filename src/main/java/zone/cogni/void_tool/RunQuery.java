@@ -37,8 +37,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static org.assertj.core.api.Assertions.*;
-
 public class RunQuery implements Supplier<Optional<QueryResult>> {
 
   private static final Logger log = LoggerFactory.getLogger(RunQuery.class);
@@ -150,7 +148,10 @@ public class RunQuery implements Supplier<Optional<QueryResult>> {
       return Collections.singletonList(getRowMap((ObjectNode) path));
     }
 
-    assertThat(path).isInstanceOf(ArrayNode.class);
+    if (!(path instanceof ArrayNode)) {
+      log.error("Failed to get results.");
+      return Collections.emptyList();
+    }
 
     List<Map<String, RDFNode>> result = new ArrayList<>();
     ArrayNode array = (ArrayNode) path;
@@ -215,7 +216,10 @@ public class RunQuery implements Supplier<Optional<QueryResult>> {
       return Collections.singleton(getVariable((ObjectNode) path));
     }
 
-    assertThat(path).isInstanceOf(ArrayNode.class);
+    if (!(path instanceof ArrayNode)) {
+      log.error("Failed to get results.");
+      return Collections.emptySet();
+    }
 
     Set<String> result = new HashSet<>();
 
