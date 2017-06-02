@@ -1,0 +1,5 @@
+
+SELECT (COUNT(distinct ?property) AS ?total) ?property {
+    ?s ?property ?o. FILTER (ISIRI(?property))
+}
+GROUP BY ?property

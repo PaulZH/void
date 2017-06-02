@@ -1,0 +1,2 @@
+
+SELECT (COUNT(*) AS ?total) { ?s ?p ?o }

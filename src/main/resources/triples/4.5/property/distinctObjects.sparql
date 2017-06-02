@@ -1,0 +1,7 @@
+
+SELECT (COUNT(DISTINCT ?o) AS ?total) ?property {
+    ?s ?property ?o. FILTER (!isLiteral(?o) && ISIRI(?property))
+}
+GROUP BY ?property
+
+

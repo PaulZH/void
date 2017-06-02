@@ -1,0 +1,2 @@
+
+    SELECT (COUNT(distinct ?o) AS ?total) {  ?s a ?o  }

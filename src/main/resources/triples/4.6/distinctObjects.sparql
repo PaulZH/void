@@ -1,0 +1,2 @@
+
+    SELECT (COUNT(DISTINCT ?o) AS ?total) {  ?s ?p ?o. FILTER (!isLiteral(?o))  }

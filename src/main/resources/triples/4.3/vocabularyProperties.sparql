@@ -1,0 +1,5 @@
+SELECT DISTINCT ?result {
+    ?s ?result ?o.
+    FILTER (ISIRI(?result))
+}
+

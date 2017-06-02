@@ -18,12 +18,14 @@ public class Main {
   private static final Logger log = LoggerFactory.getLogger(Main.class);
 
   private static String usage =
-          "usage: void.jar [--datasetUri uri] [--sparqlEndpoint url] \n" +
-                  "optional:             [--file : where output is written, default dataset.ttl]\n" +
-                  "                      [--format  : default TURTLE  \n" +
-                  "                                   one of RDF/XML, RDF/XML-ABBREV, N-TRIPLE, TURTLE and N3] \n" +
-                  "                      [--timeout : query timeout in seconds, default 300]\n" +
-                  "                      [--uriSpace : uri space of dataset, also used to limit example resources]";
+          "usage: void.jar       [--datasetUri uri] \n" +
+                  "                      [--sparqlEndpoint url] \n" +
+                  "optional:             [--file      : where output is written, default dataset.ttl]\n" +
+                  "                      [--useGraphs : true or false, default false. Use true if you want to query all graphs  instead of only the default graph] \n" +
+                  "                      [--format    : default TURTLE  \n" +
+                  "                                     one of RDF/XML, RDF/XML-ABBREV, N-TRIPLE, TURTLE and N3] \n" +
+                  "                      [--timeout   : query timeout in seconds, default 300]\n" +
+                  "                      [--uriSpace  : uri space of dataset, also used to limit example resources]";
 
 
 
@@ -33,6 +35,7 @@ public class Main {
   private static String format = "TURTLE";
   private static String file = "dataset.ttl";
   private static String uriSpace;
+  private static boolean useGraphs;
 
   public static void main(String[] args) throws IOException {
 
@@ -40,7 +43,7 @@ public class Main {
 
     processArguments(Arrays.asList(args));
 
-    VoidGenerator voidGenerator = new VoidGenerator(timeoutInSeconds, sparqlEndpoint, datasetUri, uriSpace);
+    VoidGenerator voidGenerator = new VoidGenerator(timeoutInSeconds, sparqlEndpoint, datasetUri, uriSpace, useGraphs);
     Model model = voidGenerator.get();
 
     model.write(new FileOutputStream(file), format);
@@ -63,6 +66,7 @@ public class Main {
       Match(argument).of(
               Case(is("--datasetUri"), () -> datasetUri = value),
               Case(is("--sparqlEndpoint"), () -> sparqlEndpoint = value),
+              Case(is("--useGraphs"), () -> useGraphs = Boolean.parseBoolean(value)),
               Case(is("--format"), () -> format = value),
               Case(is("--timeout"), () -> timeoutInSeconds = Integer.parseInt(value)),
               Case(is("--file"), () -> file = value),
@@ -83,6 +87,7 @@ public class Main {
     System.out.println("Running with settings: ");
     System.out.println("");
     System.out.println("\t\t Dataset uri     : " + datasetUri);
+    System.out.println("\t\t Use graphs      : " + useGraphs);
     System.out.println("\t\t Uri space       : " + uriSpace);
     System.out.println("\t\t Sparql endpoint : " + sparqlEndpoint);
     System.out.println("\t\t Timeout         : " + timeoutInSeconds);

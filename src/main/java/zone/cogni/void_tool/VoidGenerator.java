@@ -49,13 +49,15 @@ public class VoidGenerator implements Supplier<Model> {
   private final Model model = ModelFactory.createDefaultModel();
   private final Map<String, Map<String, RDFNode>> typeVoidData = new HashMap<>();
   private final Map<String, Map<String, RDFNode>> propertyVoidData = new HashMap<>();
+  private final boolean useGraphs;
 
 
-  public VoidGenerator(int timeout, String sparqlEndpoint, String datasetUri, String uriSpace) {
+  public VoidGenerator(int timeout, String sparqlEndpoint, String datasetUri, String uriSpace, boolean useGraphs) {
     this.timeout = timeout;
     this.sparqlEndpoint = sparqlEndpoint;
     this.datasetUri = datasetUri;
     this.uriSpace = uriSpace;
+    this.useGraphs = useGraphs;
 
     model.setNsPrefix("void", VOID);
   }
@@ -79,7 +81,7 @@ public class VoidGenerator implements Supplier<Model> {
   }
 
   private void addVocabularies(String name) {
-    RunQuery.runFromResource(timeout, sparqlEndpoint, name).ifPresent(queryResult -> {
+    RunQuery.runFromResource(timeout, sparqlEndpoint, useGraphs, name).ifPresent(queryResult -> {
       Set<String> vocabularies = queryResult.getRows().stream()
               .map(row -> row.get("result").asResource().getURI())
               .map(uri -> uri.contains("#") ? StringUtils.substringBeforeLast(uri, "#")
@@ -196,7 +198,7 @@ public class VoidGenerator implements Supplier<Model> {
   }
 
   private void addExampleResources() {
-    String sparqlName = "4.1/exampleResources.sparql";
+    String sparqlName = (useGraphs ? "quads" : "triples") +  "/4.1/exampleResources.sparql";
     String uriSpaceFilter = StringUtils.isBlank(uriSpace) ? ""
                                                           : "\n && (STRSTARTS(STR(?s), '" + uriSpace + "') )";
     String sparql = MessageFormatter.format(readQuery(sparqlName), uriSpaceFilter).getMessage();
@@ -214,7 +216,6 @@ public class VoidGenerator implements Supplier<Model> {
               });
             }
     );
-
   }
 
   private void addUriSpace() {
@@ -226,7 +227,7 @@ public class VoidGenerator implements Supplier<Model> {
   }
 
   private Optional<QueryResult> runQuery(String resource) {
-    return RunQuery.runFromResource(timeout, sparqlEndpoint, resource);
+    return RunQuery.runFromResource(timeout, sparqlEndpoint, useGraphs, resource);
   }
 
   private RDFNode getTotal(String resource) {

@@ -1,0 +1,4 @@
+SELECT DISTINCT ?result {
+    ?s a ?result
+    FILTER (isIRI(?result))
+}

@@ -41,7 +41,10 @@ import static org.assertj.core.api.Assertions.*;
 
 public class RunQuery implements Supplier<Optional<QueryResult>> {
 
-  public static Optional<QueryResult> runFromResource(int timeout, String sparqlEndpoint, String queryResource) {
+  private static final Logger log = LoggerFactory.getLogger(RunQuery.class);
+
+  public static Optional<QueryResult> runFromResource(int timeout, String sparqlEndpoint, boolean useGraphs, String queryResource) {
+    queryResource = (useGraphs ? "quads" : "triples") + "/" + queryResource;
     return runFromSparql(timeout, sparqlEndpoint, readQuery(queryResource), queryResource);
   }
 
@@ -49,8 +52,14 @@ public class RunQuery implements Supplier<Optional<QueryResult>> {
     return new RunQuery(timeout, sparqlEndpoint, sparql, sparqlName).get();
   }
 
-  private static final Logger log = LoggerFactory.getLogger(RunQuery.class);
-
+  private static String readQuery(String resource) {
+    try {
+      return IOUtils.toString(new ClassPathResource(resource).getInputStream(), "UTF-8");
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
   private final int timeout;
   private final String sparqlEndpoint;
   private final String sparql;
@@ -126,15 +135,6 @@ public class RunQuery implements Supplier<Optional<QueryResult>> {
       log.error("Call failed for '{}'.", sparqlName);
       log.debug(EntityUtils.toString(response.getEntity()));
       return null;
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private static String readQuery(String resource) {
-    try {
-      return IOUtils.toString(new ClassPathResource(resource).getInputStream(), "UTF-8");
     }
     catch (IOException e) {
       throw new RuntimeException(e);

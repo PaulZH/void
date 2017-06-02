@@ -1,0 +1,5 @@
+
+SELECT (COUNT(distinct ?s) AS ?total) ?type {
+    ?s a []; a ?type
+}
+GROUP BY ?type

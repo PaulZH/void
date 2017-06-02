@@ -26,12 +26,14 @@ For more information see https://www.w3.org/TR/void/.
 From the commandline output
 
 ```
-usage: void.jar [--datasetUri uri] [--sparqlEndpoint url] 
-optional:             [--file : where output is written, default dataset.ttl]
-                      [--format  : default TURTLE  
-                                   one of RDF/XML, RDF/XML-ABBREV, N-TRIPLE, TURTLE and N3] 
-                      [--timeout : query timeout in seconds, default 300]
-                      [--uriSpace : uri space of dataset, also used to limit example resources]
+usage: void.jar       [--datasetUri uri] 
+                      [--sparqlEndpoint url] 
+optional:             [--file      : where output is written, default dataset.ttl]
+                      [--useGraphs : true or false, default false. Use true if you want to query all graphs instead of only the default graph] 
+                      [--format    : default TURTLE  
+                                     one of RDF/XML, RDF/XML-ABBREV, N-TRIPLE, TURTLE and N3] 
+                      [--timeout   : query timeout in seconds, default 300]
+                      [--uriSpace  : uri space of dataset, also used to limit example resources]
 ```
 
 
@@ -42,8 +44,21 @@ java -jar void-1.0.0.jar
    --sparqlEndpoint http://data.kbodata.be/sparql    
    --datasetUri http://data.kbodata.be/dataset/kbo#id           
    --file kbo.ttl
-   --uriSpace http://schema.org/
+   --uriSpace http://data.kbodata.be
+```
 
+will start and show
+
+```
+Running with settings: 
+
+		 Dataset uri     : http://data.kbodata.be/dataset/kbo#id
+		 Use graphs      : false
+		 Uri space       : http://data.kbodata.be
+		 Sparql endpoint : http://data.kbodata.be/sparql
+		 Timeout         : 1200
+		 File            : kbo.ttl
+		 Format          : TURTLE
 ```
                       
 ## Building
