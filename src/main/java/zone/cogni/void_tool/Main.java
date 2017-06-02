@@ -23,7 +23,8 @@ public class Main {
                   "                      [--format  : default TURTLE  \n" +
                   "                                   one of RDF/XML, RDF/XML-ABBREV, N-TRIPLE, TURTLE and N3] \n" +
                   "                      [--timeout : query timeout in seconds, default 300]\n" +
-                  "                      [--uriSpace : uri space of dataset]";
+                  "                      [--uriSpace : uri space of dataset, also used to limit example resources]";
+
 
 
   private static String datasetUri;

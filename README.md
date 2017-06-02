@@ -1,9 +1,9 @@
 
+## Introduction
 
+Using this tool you can generate VoID data for a SPARQL endpoint.
 
-This tool allows to generation void data for a sparql endpoint.
-
-It covers following sections of the Void specification.
+It covers following sections of the VoID specification.
 * 3.2 SPARQL endpoints (void:sparqlEndpoint)
 * 4.1 Example resources (void:exampleResource )
 * 4.2 Patterns for resource URIs (void:uriSpace)
@@ -23,15 +23,18 @@ optional:             [--file : where output is written, default dataset.ttl]
                       [--format  : default TURTLE  
                                    one of RDF/XML, RDF/XML-ABBREV, N-TRIPLE, TURTLE and N3] 
                       [--timeout : query timeout in seconds, default 300]
-                      [--uriSpace : uri space of dataset]
+                      [--uriSpace : uri space of dataset, also used to limit example resources]
 ```
+
 
 Example                     
 
 ```
 java -jar void-1.0.0.jar 
    --sparqlEndpoint http://data.kbodata.be/sparql    
-   --datasetUri http://data.kbodata.be/dataset/kbo#id           --file kbo.ttl
+   --datasetUri http://data.kbodata.be/dataset/kbo#id           
+   --file kbo.ttl
+   --uriSpace http://schema.org/
 
 ```
                       
