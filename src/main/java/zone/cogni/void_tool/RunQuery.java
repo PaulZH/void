@@ -76,7 +76,7 @@ public class RunQuery implements Supplier<Optional<QueryResult>> {
     try {
       String bodyAsString = getRequestResultXmlAsString();
 //      log.info(bodyAsString);
-      if (bodyAsString == null) return null;
+      if (bodyAsString == null) return Optional.empty();
 
       JsonNode jsonNode = convertXmlToJson(bodyAsString);
       if (jsonNode.size() == 0) {
