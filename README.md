@@ -10,6 +10,14 @@ It covers following sections of the VoID specification.
 * 4.3 Vocabularies used in a dataset (void:vocabulary)
 * 4.5 Partitioning a dataset based on classes and properties
 * 4.6 Providing statistics about datasets
+  * void:triples
+  * void:entities
+  * void:classes
+  * void:properties
+  * void:distinctSubjects
+  * void:distinctObjects
+
+List of properties of section 4.6 is also valid for 4.5.
 
 For more information see https://www.w3.org/TR/void/.
 
