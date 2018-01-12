@@ -8,6 +8,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
@@ -46,23 +47,28 @@ public class VoidGenerator implements Supplier<Model> {
   private final String sparqlEndpoint;
   private final String datasetUri;
   private final String uriSpace;
+  private final boolean useGraphs;
+  private final String settings;
+
   private final Model model = ModelFactory.createDefaultModel();
   private final Map<String, Map<String, RDFNode>> typeVoidData = new HashMap<>();
   private final Map<String, Map<String, RDFNode>> propertyVoidData = new HashMap<>();
-  private final boolean useGraphs;
 
 
-  public VoidGenerator(int timeout, String sparqlEndpoint, String datasetUri, String uriSpace, boolean useGraphs) {
+  public VoidGenerator(int timeout, String sparqlEndpoint, String datasetUri, String uriSpace, boolean useGraphs, String settings) {
     this.timeout = timeout;
     this.sparqlEndpoint = sparqlEndpoint;
     this.datasetUri = datasetUri;
     this.uriSpace = uriSpace;
     this.useGraphs = useGraphs;
+    this.settings =  settings;
 
     model.setNsPrefix("void", VOID);
   }
 
   @Override public Model get() {
+    addSettingsAsComment(); // basic tool documentation
+
     addSparqlEndpoint(); // 3.2
     addExampleResources(); // 4.1
     addUriSpace(); // 4.2
@@ -73,6 +79,13 @@ public class VoidGenerator implements Supplier<Model> {
     getPropertyStatistics(); // 4.5
 
     return model;
+  }
+
+  private void addSettingsAsComment() {
+    model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
+                                              RDFS.comment,
+                                              ResourceFactory.createPlainLiteral(settings)));
+
   }
 
   private void addVocabularies() {

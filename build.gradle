@@ -35,7 +35,7 @@ dependencies {
 
 jar {
   baseName = 'void'
-  version = '1.1.0'
+  version = '1.2.0-SNAPSHOT'
   manifest {
     attributes (
             'Main-Class': 'zone.cogni.void_tool.Main'

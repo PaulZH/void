@@ -1,5 +1,6 @@
 package zone.cogni.void_tool;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +10,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.System.*;
-import static javaslang.API.*;
-import static javaslang.Predicates.*;
+import static java.lang.System.currentTimeMillis;
+import static java.lang.System.exit;
+import static javaslang.API.$;
+import static javaslang.API.Case;
+import static javaslang.API.Match;
+import static javaslang.API.run;
+import static javaslang.Predicates.is;
 
 public class Main {
 
@@ -28,7 +33,6 @@ public class Main {
                   "                      [--uriSpace  : uri space of dataset, also used to limit example resources]";
 
 
-
   private static String datasetUri;
   private static String sparqlEndpoint;
   private static int timeoutInSeconds = 300;
@@ -43,7 +47,7 @@ public class Main {
 
     processArguments(Arrays.asList(args));
 
-    VoidGenerator voidGenerator = new VoidGenerator(timeoutInSeconds, sparqlEndpoint, datasetUri, uriSpace, useGraphs);
+    VoidGenerator voidGenerator = new VoidGenerator(timeoutInSeconds, sparqlEndpoint, datasetUri, uriSpace, useGraphs, getSettings());
     Model model = voidGenerator.get();
 
     model.write(new FileOutputStream(file), format);
@@ -79,21 +83,43 @@ public class Main {
     if (uriSpace == null) uriSpace = "";
 
     printSettings();
+
+    checkArguments();
+  }
+
+  private static void checkArguments() {
+    boolean fail = false;
+
+    if (StringUtils.isBlank(datasetUri)) {
+      System.out.println("Invalid parameters: --datasetUri is not set.");
+      fail = true;
+    }
+
+    if (StringUtils.isBlank(sparqlEndpoint)) {
+      System.out.println("Invalid parameters: --sparqlEndpoint is not set.");
+      fail = true;
+    }
+
+    if (fail) giveHelp();
   }
 
   private static void printSettings() {
-    System.out.println("");
-    System.out.println("");
-    System.out.println("Running with settings: ");
-    System.out.println("");
-    System.out.println("\t\t Dataset uri     : " + datasetUri);
-    System.out.println("\t\t Use graphs      : " + useGraphs);
-    System.out.println("\t\t Uri space       : " + uriSpace);
-    System.out.println("\t\t Sparql endpoint : " + sparqlEndpoint);
-    System.out.println("\t\t Timeout         : " + timeoutInSeconds);
-    System.out.println("\t\t File            : " + file);
-    System.out.println("\t\t Format          : " + format);
-    System.out.println("");
+    System.out.println(getSettings());
+  }
+
+  private static String getSettings() {
+    return "\n" +
+            "\n" +
+            "Running with settings: " + "\n" +
+            "\n" +
+            "\t\t Dataset uri     : " + datasetUri + "\n" +
+            "\t\t Use graphs      : " + useGraphs + "\n" +
+            "\t\t Uri space       : " + uriSpace + "\n" +
+            "\t\t Sparql endpoint : " + sparqlEndpoint + "\n" +
+            "\t\t Timeout         : " + timeoutInSeconds + "\n" +
+            "\t\t File            : " + file + "\n" +
+            "\t\t Format          : " + format + "\n" +
+            "\n";
   }
 
   private static void invalidArgument(String argument) {
