@@ -5,7 +5,7 @@ buildscript {
   ext {
     springBootVersion = '1.5.9.RELEASE'
 
-    projectVersion = "1.2.0-SNAPSHOT"
+    projectVersion = "1.2.0"
     projectName = "void"
   }
   repositories {
