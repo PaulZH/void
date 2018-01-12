@@ -1,8 +1,26 @@
 group 'zone.cogni'
 
 
+buildscript {
+  ext {
+    springBootVersion = '1.5.9.RELEASE'
+
+    projectVersion = "1.2.0-SNAPSHOT"
+    projectName = "void"
+  }
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
+}
+
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
 
 sourceCompatibility = 1.8
 
@@ -11,16 +29,12 @@ repositories {
 }
 
 dependencies {
+  compile('org.springframework.boot:spring-boot-starter')
 
   compile 'org.apache.jena:jena-core:3.2.0'
   compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
   compile group: 'org.springframework', name: 'spring-web', version: '4.3.8.RELEASE'
-  compile ('io.javaslang:javaslang:2.0.6')
-//  compile group: 'io.vavr', name: 'vavr', version: '0.9.0'
-
-
-  compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-  compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+  compile('io.vavr:vavr:0.9.1')
 
   compile group: 'commons-io', name: 'commons-io', version: '2.5'
   compile group: 'org.json', name: 'json', version: '20160810'
@@ -31,21 +45,6 @@ dependencies {
   compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.8.8'
   compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.8.8'
 
-}
-
-jar {
-  baseName = 'void'
-  version = '1.2.0-SNAPSHOT'
-  manifest {
-    attributes (
-            'Main-Class': 'zone.cogni.void_tool.Main'
-    )
-  }
-  from {
-    configurations.runtime.collect {
-      it.isDirectory() ? it : zipTree(it)
-    }
-  }
 }
 
 

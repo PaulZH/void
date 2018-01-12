@@ -1,24 +1,28 @@
 package zone.cogni.void_tool;
 
+import io.vavr.control.Try;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.exit;
-import static javaslang.API.$;
-import static javaslang.API.Case;
-import static javaslang.API.Match;
-import static javaslang.API.run;
-import static javaslang.Predicates.is;
 
-public class Main {
+@SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToSystemExit"})
+@SpringBootApplication
+public class Main implements CommandLineRunner {
 
   private static final Logger log = LoggerFactory.getLogger(Main.class);
 
@@ -41,8 +45,12 @@ public class Main {
   private static String uriSpace;
   private static boolean useGraphs;
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
+    SpringApplication.run(Main.class, args);
+  }
 
+  @Override
+  public void run(String... args) throws FileNotFoundException {
     long start = currentTimeMillis();
 
     processArguments(Arrays.asList(args));
@@ -55,28 +63,27 @@ public class Main {
     log.info("Total time {}s.", (currentTimeMillis() - start) / 1000);
   }
 
-  private static void processArguments(List<String> arguments) {
+  private  void processArguments(List<String> arguments) {
     if (arguments.isEmpty() || arguments.get(0).equals("--help")) {
       System.out.println(usage);
       exit(0);
     }
 
     for (int i = 0; i < arguments.size() - 1; i += 2) {
-
       String argument = arguments.get(i);
       String value = arguments.get(i + 1);
 
 
       Match(argument).of(
-              Case(is("--datasetUri"), () -> datasetUri = value),
-              Case(is("--sparqlEndpoint"), () -> sparqlEndpoint = value),
-              Case(is("--useGraphs"), () -> useGraphs = Boolean.parseBoolean(value)),
-              Case(is("--format"), () -> format = value),
-              Case(is("--timeout"), () -> timeoutInSeconds = Integer.parseInt(value)),
-              Case(is("--file"), () -> file = value),
-              Case(is("--uriSpace"), () -> uriSpace = value),
-              Case(is("--help"), () -> run(Main::giveHelp)),
-              Case($(), () -> run(() -> invalidArgument(argument)))
+              Case($("--datasetUri"), () -> datasetUri = value),
+              Case($("--sparqlEndpoint"), () -> sparqlEndpoint = value),
+              Case($("--useGraphs"), () -> useGraphs = Boolean.parseBoolean(value)),
+              Case($("--format"), () -> format = value),
+              Case($("--timeout"), () -> timeoutInSeconds = Integer.parseInt(value)),
+              Case($("--file"), () -> file = value),
+              Case($("--uriSpace"), () -> uriSpace = value),
+              Case($("--help"), () -> Try.run(Main::giveHelp)),
+              Case($(), () -> Try.run(() -> invalidArgument(argument)))
       );
     }
 
@@ -87,7 +94,7 @@ public class Main {
     checkArguments();
   }
 
-  private static void checkArguments() {
+  private  void checkArguments() {
     boolean fail = false;
 
     if (StringUtils.isBlank(datasetUri)) {
@@ -103,11 +110,11 @@ public class Main {
     if (fail) giveHelp();
   }
 
-  private static void printSettings() {
+  private  void printSettings() {
     System.out.println(getSettings());
   }
 
-  private static String getSettings() {
+  private  String getSettings() {
     return "\n" +
             "\n" +
             "Running with settings: " + "\n" +
@@ -122,7 +129,7 @@ public class Main {
             "\n";
   }
 
-  private static void invalidArgument(String argument) {
+  private  void invalidArgument(String argument) {
     System.err.println("invalid argument given: '" + argument + "'");
     giveHelp();
   }
@@ -131,5 +138,6 @@ public class Main {
     System.out.println(usage);
     exit(1);
   }
+
 
 }
