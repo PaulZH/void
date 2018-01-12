@@ -40,7 +40,7 @@ optional:             [--file      : where output is written, default dataset.tt
 Example                     
 
 ```
-java -jar void-1.1.0.jar 
+java -jar void.jar 
    --sparqlEndpoint http://data.kbodata.be/sparql    
    --datasetUri http://data.kbodata.be/dataset/kbo#id           
    --file kbo.ttl
