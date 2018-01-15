@@ -8,9 +8,9 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.jena.vocabulary.VOID;
 import org.slf4j.helpers.MessageFormatter;
 import org.springframework.core.io.ClassPathResource;
 
@@ -25,10 +25,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class VoidGenerator implements Supplier<Model> {
-
-  private static final Logger log = LoggerFactory.getLogger(VoidGenerator.class);
-
-  private static final String VOID = "http://rdfs.org/ns/void#";
 
   private static List<String> voidProperties = Arrays.asList("triples", "entities",
                                                              "classes", "properties",
@@ -63,12 +59,13 @@ public class VoidGenerator implements Supplier<Model> {
     this.useGraphs = useGraphs;
     this.settings =  settings;
 
-    model.setNsPrefix("void", VOID);
+    model.setNsPrefix("void", VOID.NS);
   }
 
   @Override public Model get() {
     addSettingsAsComment(); // basic tool documentation
 
+    addDatasetType();
     addSparqlEndpoint(); // 3.2
     addExampleResources(); // 4.1
     addUriSpace(); // 4.2
@@ -79,6 +76,12 @@ public class VoidGenerator implements Supplier<Model> {
     getPropertyStatistics(); // 4.5
 
     return model;
+  }
+
+  private void addDatasetType() {
+    model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
+                                              RDF.type,
+                                              VOID.Dataset));
   }
 
   private void addSettingsAsComment() {
@@ -103,7 +106,7 @@ public class VoidGenerator implements Supplier<Model> {
 
       vocabularies.forEach(vocabulary -> {
         model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
-                                                  ResourceFactory.createProperty(VOID, "vocabulary"),
+                                                  VOID.vocabulary,
                                                   ResourceFactory.createResource(vocabulary)));
       });
     });
@@ -111,13 +114,12 @@ public class VoidGenerator implements Supplier<Model> {
 
   private void addSparqlEndpoint() {
     model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
-                                              ResourceFactory.createProperty(VOID, "sparqlEndpoint"),
+                                              VOID.sparqlEndpoint,
                                               ResourceFactory.createResource(sparqlEndpoint)));
 
   }
 
   private void getGlobalStatistics() {
-
     voidProperties.forEach(voidProperty -> addDatasetStatement(voidProperty, getTotal("4.6/" + voidProperty + ".sparql")));
   }
 
@@ -125,7 +127,7 @@ public class VoidGenerator implements Supplier<Model> {
     if (value == null) return;
 
     model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
-                                              ResourceFactory.createProperty(VOID, property),
+                                              ResourceFactory.createProperty(VOID.NS, property),
                                               value));
   }
 
@@ -138,15 +140,15 @@ public class VoidGenerator implements Supplier<Model> {
       typeVoid.forEach((voidProperty, rdfNode) -> {
 
         model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
-                                                  ResourceFactory.createProperty(VOID, "classPartition"),
+                                                  VOID.classPartition,
                                                   classResource));
 
         model.add(ResourceFactory.createStatement(classResource,
-                                                  ResourceFactory.createProperty(VOID, voidProperty),
+                                                  ResourceFactory.createProperty(VOID.NS, voidProperty),
                                                   rdfNode));
 
         model.add(ResourceFactory.createStatement(classResource,
-                                                  ResourceFactory.createProperty(VOID, "class"),
+                                                  VOID._class,
                                                   ResourceFactory.createResource(type)));
 
       });
@@ -179,15 +181,15 @@ public class VoidGenerator implements Supplier<Model> {
       propertyVoid.forEach((voidProperty, rdfNode) -> {
 
         model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
-                                                  ResourceFactory.createProperty(VOID, "propertyPartition"),
+                                                  VOID.propertyPartition,
                                                   propertyResource));
 
         model.add(ResourceFactory.createStatement(propertyResource,
-                                                  ResourceFactory.createProperty(VOID, voidProperty),
+                                                  ResourceFactory.createProperty(VOID.NS, voidProperty),
                                                   rdfNode));
 
         model.add(ResourceFactory.createStatement(propertyResource,
-                                                  ResourceFactory.createProperty(VOID, "property"),
+                                                  VOID.property,
                                                   ResourceFactory.createResource(property)));
 
       });
@@ -224,7 +226,7 @@ public class VoidGenerator implements Supplier<Model> {
 
               uris.forEach(uri -> {
                 model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
-                                                          ResourceFactory.createProperty(VOID, "exampleResource"),
+                                                          VOID.exampleResource,
                                                           uri));
               });
             }
@@ -234,7 +236,7 @@ public class VoidGenerator implements Supplier<Model> {
   private void addUriSpace() {
     if (StringUtils.isNotBlank(uriSpace)) {
       model.add(ResourceFactory.createStatement(ResourceFactory.createResource(datasetUri),
-                                                ResourceFactory.createProperty(VOID, "uriSpace"),
+                                                VOID.uriSpace,
                                                 ResourceFactory.createPlainLiteral(uriSpace)));
     }
   }
